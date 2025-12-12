@@ -5,74 +5,49 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>VASAVI SAROVAR - HANDOVER COUNTDOWN</title>
 <style>
-  /* ----- Background (Sarovar blue + Vasavi gold) ----- */
-  :root{--gold:#f6a65b;}
+  :root{--gold:#f6a65b;--navy1:#001a33;--navy2:#003b6f;--sarovar:#0075c9;}
+  /* page background */
   body{
     margin:0;min-height:100vh;
-    background: linear-gradient(135deg,#001a33,#003b6f,#0075c9,#003b6f,#001a33);
+    background: linear-gradient(135deg,var(--navy1),var(--navy2),var(--sarovar),var(--navy2),var(--navy1));
     background-size:500% 500%; animation: bgShift 18s infinite ease-in-out;
     font-family: Arial, Helvetica, sans-serif; color:#fff; text-align:center;
     transition: background 0.8s ease;
   }
   @keyframes bgShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
-  /* celebration background */
+  /* celebrate style */
   body.celebrate{
     background: radial-gradient(circle at 30% 20%, #fff2d9 0%, #ffd08a 10%, #ffb44b 25%, #ff7a00 45%, #b64b00 85%);
-    color:#06121a;
-    animation:none !important;
+    color:#06121a; animation:none !important;
   }
 
-  /* gold glows */
-  .bg-glow{position:fixed;border-radius:50%;filter:blur(36px);pointer-events:none}
+  /* glows */
+  .bg-glow{position:fixed;border-radius:50%;filter:blur(36px);pointer-events:none;z-index:0}
   .bg-glow.g1{width:240px;height:240px;left:6%;top:6%;background:radial-gradient(circle, rgba(255,176,64,0.55), rgba(255,176,64,0));}
   .bg-glow.g2{width:300px;height:300px;right:6%;bottom:10%;background:radial-gradient(circle, rgba(255,176,64,0.40), rgba(255,176,64,0));opacity:0.85}
 
-  /* header & countdown */
-  header{padding-top:48px}
-  h1{margin:0;font-size:36px;color:var(--gold)}
-  #countdown-box{margin:18px auto 6px;background:rgba(0,0,0,0.36);padding:14px 22px;border-radius:10px;display:inline-block;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
-  #countdown{font-weight:700;color:var(--gold);font-size:20px}
+  header{padding-top:40px;position:relative;z-index:2}
+  h1{margin:4px 0;font-size:30px;color:var(--gold);letter-spacing:0.6px}
+  #countdown-box{margin:12px auto 6px;background:rgba(0,0,0,0.36);padding:12px 18px;border-radius:10px;display:inline-block;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+  #countdown{font-weight:700;color:var(--gold);font-size:18px}
 
-  /* timeline */
-  .timeline-container{position:relative;width:92%;max-width:1100px;margin:34px auto 12px;height:140px}
+  .timeline-container{position:relative;width:92%;max-width:1100px;margin:34px auto 12px;height:160px;z-index:1}
   .timeline-line{position:absolute;left:4%;right:4%;top:56%;height:6px;background:rgba(255,255,255,0.28);border-radius:6px}
   .year{position:absolute;top:66%;transform:translateY(-50%);font-weight:700;color:var(--gold);font-size:14px}
-  .year.y2023{left:4%}
-  .year.y2024{left:24%}
-  .year.y2025{left:44%}
-  .year.y2026{left:64%}
-  .year.y2027{left:84%}
+  .year.y2023{left:4%} .year.y2024{left:24%} .year.y2025{left:44%} .year.y2026{left:64%} .year.y2027{left:84%}
 
-  /* handover board */
-  .handover-board{position:absolute;left:82%;top:18%;transform:translateX(0);background:var(--gold);color:#000;padding:8px 12px;border-radius:8px;font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,0.25)}
+  .handover-board{position:absolute;left:82%;top:18%;background:var(--gold);color:#000;padding:8px 12px;border-radius:8px;font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,0.25)}
 
-  /* runner (SVG wrapper) */
-  .runner-wrap{position:absolute;top:10%;left:4%;width:56px;height:56px;transform:translateX(-50%);pointer-events:none}
-  /* animation moves the wrapper from left start to right end via CSS keyframes */
-  @keyframes runnerMove{
-    0%   { left:4%  }   /* 2023 */
-    20%  { left:44% }   /* reach 2025 */
-    35%  { left:44% }   /* pause */
-    55%  { left:64% }   /* 2026 */
-    85%  { left:84% }   /* 2027 arrival */
-    100% { left:4%  }   /* reset */
-  }
-  .runner-wrap{animation: runnerMove 14s linear infinite; will-change:left}
-
-  /* subtle runner shadow */
+  /* runner */
+  .runner-wrap{position:absolute;top:8%;left:4%;width:56px;height:56px;transform:translateX(-50%);pointer-events:none;z-index:3}
+  @keyframes runnerMove{0%{left:4%}20%{left:44%}35%{left:44%}55%{left:64%}85%{left:84%}100%{left:4%}}
+  .runner-wrap{animation:runnerMove 14s linear infinite;will-change:left}
   .runner-shadow{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:38px;height:8px;background:rgba(0,0,0,0.35);border-radius:50%;filter:blur(2px);opacity:0.6}
 
-  /* project button */
-  .project-block{margin-top:8px;padding:18px 20px;background:rgba(0,0,0,0.28);display:inline-block;border-radius:10px}
+  .project-block{margin-top:14px;padding:16px 18px;background:rgba(0,0,0,0.28);display:inline-block;border-radius:10px;z-index:2}
   .project-btn{display:inline-block;padding:10px 16px;border-radius:8px;background:var(--gold);color:#000;font-weight:700;text-decoration:none}
 
-  /* responsive */
-  @media (max-width:640px){
-    h1{font-size:20px}
-    #countdown{font-size:16px}
-    .runner-wrap{width:44px;height:44px;top:5%}
-  }
-
+  @media (max-width:640px){ h1{font-size:20px} #countdown{font-size:14px} .runner-wrap{width:46px;height:46px;top:5%} }
 </style>
 </head>
 <body>
@@ -99,19 +74,14 @@
 
     <div class="handover-board">Handover</div>
 
-    <!-- runner SVG wrapper (inline SVG — person running) -->
+    <!-- runner SVG (person running) -->
     <div class="runner-wrap" id="runnerWrap" aria-hidden="true">
-      <!-- runner SVG (simple, crisp) -->
       <svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vasavi Team">
-        <g transform="translate(0,0)">
-          <!-- body -->
+        <g>
           <path d="M39 14c0 3-2 5-5 5s-5-2-5-5 2-5 5-5 5 2 5 5z" fill="#f6a65b"/>
           <path d="M28 29c4-2 11-2 14 3 3 5 2 10-3 12-5 2-11 1-15-3-4-4-3-9 4-12z" fill="#ffffff"/>
-          <!-- legs -->
           <path d="M30 44c3 5 7 8 11 7 4-1 6-7 5-9-1-2-6 0-10 3l-6-1z" fill="#f6a65b"/>
-          <!-- arm -->
           <path d="M20 28c4 0 7-3 10-4 3-1 6 1 6 3 0 3-6 5-9 6l-7-5z" fill="#073046"/>
-          <!-- head -->
           <circle cx="39" cy="10" r="4" fill="#073046"/>
         </g>
       </svg>
@@ -120,202 +90,137 @@
 
   </div>
 
-  <!-- project block -->
-  <div class="project-block">
+  <!-- project -->
+  <div class="project-block" role="region" aria-label="Project link">
     <h3 style="margin:0;color:var(--gold)">Explore Vasavi Sarovar</h3>
     <p style="margin:8px 0 0 0">Tap below to open the official project page.</p>
-    <a class="project-btn" href="https://thevasavigroup.com/projects/vasavi-sarovar/" target="_blank">Open Project Page</a>
+    <a class="project-btn" href="https://thevasavigroup.com/projects/vasavi-sarovar/" target="_blank" rel="noopener">Open Project Page</a>
   </div>
 
-  <!-- confetti script -->
+  <!-- confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
+  <!-- countdown + runner arrival + celebration logic -->
   <script>
-  // ---------- Countdown ----------
-  function updateCountdown() {
+  // COUNTDOWN
+  function updateCountdown(){
     const end = new Date("2028-12-31T00:00:00").getTime();
     const now = Date.now();
     const diff = end - now;
-
-    if (diff <= 0) {
+    if (diff <= 0){
       document.getElementById('countdown').innerText = "🎉 Congratulations! Handover Complete!";
       triggerCelebration();
       return;
     }
-
-    // compute Y/M/D/H/M/S
     const sec = Math.floor(diff/1000);
     const years = Math.floor(sec / (60*60*24*365));
     const months = Math.floor((sec - years*60*60*24*365) / (60*60*24*30));
-    const days  = Math.floor((sec % (60*60*24*30)) / (60*60*24));
+    const days = Math.floor((sec % (60*60*24*30)) / (60*60*24));
     const hours = Math.floor((sec % (60*60*24)) / (60*60));
-    const mins  = Math.floor((sec % (60*60)) / 60);
-    const secs  = sec % 60;
-
-    document.getElementById('countdown').innerText =
-      `${years}Y : ${months}M : ${days}D : ${hours}H : ${mins}M : ${secs}S`;
+    const mins = Math.floor((sec % (60*60)) / 60);
+    const secs = sec % 60;
+    document.getElementById('countdown').innerText = `${years}Y : ${months}M : ${days}D : ${hours}H : ${mins}M : ${secs}S`;
   }
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
+  setInterval(updateCountdown,1000); updateCountdown();
 
-  // ---------- Celebration logic when runner reaches 2027 ----------
+  // RUNNER ARRIVAL -> CELEBRATION
   const runnerWrap = document.getElementById('runnerWrap');
   const timeline = document.getElementById('timeline');
-  let celebrationCooldown = 0; // timestamp to avoid repeats
+  let celebrationCooldown = 0;
 
-  function checkRunnerArrival() {
+  function checkRunnerArrival(){
     const now = Date.now();
     if (now < celebrationCooldown) return;
-
     const runnerRect = runnerWrap.getBoundingClientRect();
     const tlRect = timeline.getBoundingClientRect();
-
-    // target position: 2027 marker at 84% of timeline width (as CSS)
     const targetX = tlRect.left + 0.84 * tlRect.width;
-
-    // when runner's center reaches near targetX -> celebrate
     const runnerCenterX = runnerRect.left + runnerRect.width/2;
-
-    if (runnerCenterX >= targetX - 8) {
+    if (runnerCenterX >= targetX - 8){
       triggerCelebration();
-      // set cooldown for 5 seconds (prevents multiple triggers in same arrival)
       celebrationCooldown = now + 5000;
     }
   }
+  setInterval(checkRunnerArrival,250);
 
-  // call frequently to catch arrival
-  setInterval(checkRunnerArrival, 250);
-
-  function triggerCelebration() {
-    // add celebration background class
+  function triggerCelebration(){
     document.body.classList.add('celebrate');
-
-    // launch confetti
     const duration = 3500;
     const end = Date.now() + duration;
-    (function frame() {
-      confetti({ particleCount: 10, spread: 80, origin: { x: Math.random()*0.6+0.2, y: Math.random()*0.2+0.1 } });
+    (function frame(){
+      confetti({ particleCount: 12, spread: 90, origin: { x: Math.random()*0.6+0.2, y: Math.random()*0.1+0.05 } });
       if (Date.now() < end) requestAnimationFrame(frame);
     })();
-
-    // remove celebrate class after duration
-    setTimeout(() => document.body.classList.remove('celebrate'), 3800);
+    setTimeout(()=>document.body.classList.remove('celebrate'),3800);
   }
   </script>
 
-  <!-- VISITOR TRACKING: posts to your Apps Script; fallback to image-beacon if POST blocked -->
+  <!-- VISITOR TRACKING: POST to Apps Script, fallback to beacon GET -->
   <script>
   (function(){
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbx6moWYx3DMDiXQblB69usB0LgQDAkKA4aJEWeCNFUIqTXhAiSjAvdvN_gczB0JxdF4/exec";
-    // maintain single-send per page load
-    let sent = false;
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbzK9_6klplIdLhwCD0DTKkZZRMhybRk94QT3v2vuJK2ZpD-xfmbgpdP_p8iMJ33jgzO/exec";
+    let sent=false;
 
-    // get or create anon id
-    function getAnon() {
-      try {
-        let a = localStorage.getItem('vasavi_uid');
-        if (!a) {
-          a = 'U_' + Math.random().toString(36).slice(2,11);
-          localStorage.setItem('vasavi_uid', a);
-        }
+    function getAnon(){
+      try{
+        let a=localStorage.getItem('vasavi_uid');
+        if(!a){ a='U_'+Math.random().toString(36).slice(2,11); localStorage.setItem('vasavi_uid',a); }
         return a;
-      } catch(e) { return 'U_guest'; }
+      }catch(e){ return 'U_guest'; }
     }
-
-    // get query param 'user' if present (owner can pass phone or name)
-    function getQueryUser() {
-      try {
-        const p = new URLSearchParams(window.location.search);
-        return p.get('user') || '';
-      } catch(e) { return ''; }
+    function getUserParam(){
+      try{ const p=new URLSearchParams(window.location.search); return p.get('user')||'';}catch(e){return'';}
     }
+    async function getIP(){ try{ const r=await fetch('https://api.ipify.org?format=json'); if(!r.ok) return ''; const j=await r.json(); return j.ip||'';}catch(e){return'';} }
+    function getGeo(timeout=3500){ return new Promise(resolve=>{ if(!navigator.geolocation) return resolve(null); let done=false; const t=setTimeout(()=>{ if(!done){done=true;resolve(null);} },timeout); navigator.geolocation.getCurrentPosition(p=>{ if(done) return; done=true; clearTimeout(t); resolve({lat:p.coords.latitude,lon:p.coords.longitude}); }, ()=>{ if(!done){done=true;clearTimeout(t);resolve(null);} }, {timeout:timeout}); }); }
 
-    // best-effort get IP
-    async function getIP(){
-      try {
-        const r = await fetch('https://api.ipify.org?format=json');
-        if (!r.ok) return '';
-        const j = await r.json();
-        return j.ip || '';
-      } catch(e){ return ''; }
-    }
-
-    // get geo (permission prompt)
-    function getGeo(timeout = 4000){
-      return new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve(null);
-        let done = false;
-        const timer = setTimeout(()=> { if(!done){ done = true; resolve(null); } }, timeout);
-        navigator.geolocation.getCurrentPosition(pos => {
-          if (done) return;
-          done = true; clearTimeout(timer);
-          resolve({lat: pos.coords.latitude, lon: pos.coords.longitude});
-        }, err => { if(!done){ done = true; clearTimeout(timer); resolve(null); } }, {timeout: timeout});
-      });
-    }
-
-    // send payload (POST) then fallback to image beacon if fails
     async function sendLog(){
-      if (sent) return;
-      sent = true;
-
-      const anon = getAnon();
-      const userParam = getQueryUser();
-      const ip = await getIP();
-      const geo = await getGeo();
-
+      if(sent) return; sent=true;
+      const anon=getAnon(), userParam=getUserParam();
+      const ip=await getIP(); const geo=await getGeo();
       const payload = {
         visitor_id: anon,
-        user_param: userParam || '',
-        device: navigator.platform || '',
-        ua: navigator.userAgent || '',
-        screen: (window.screen && (window.screen.width + 'x' + window.screen.height)) || '',
+        user_param: userParam||'',
+        device: navigator.platform||'',
+        ua: navigator.userAgent||'',
+        screen: (window.screen && (window.screen.width + 'x' + window.screen.height))||'',
         ip: ip,
-        lat: geo ? geo.lat : '',
-        lon: geo ? geo.lon : '',
+        lat: geo?geo.lat:'',
+        lon: geo?geo.lon:'',
         page: 'countdown'
       };
 
-      // Try POST (CORS). If it fails, fallback to image beacon GET.
-      try {
-        const resp = await fetch(webAppUrl, {
+      // try POST
+      try{
+        const res = await fetch(webAppUrl, {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           mode: 'cors',
           body: JSON.stringify(payload)
         });
+        if(res && res.ok) return;
+      }catch(e){ /* ignore */ }
 
-        // success if 2xx response
-        if (resp && resp.ok) return;
-        // otherwise fallback below
-      } catch (err) {
-        // ignore and fallback
-      }
-
-      // Fallback: image beacon GET with params (doGet on Apps Script should handle)
-      try {
+      // fallback to GET image beacon
+      try{
         const q = new URLSearchParams();
         q.set('visitor_id', payload.visitor_id);
-        if (payload.user_param) q.set('user_param', payload.user_param);
+        if(payload.user_param) q.set('user_param', payload.user_param);
         q.set('device', payload.device);
         q.set('ua', payload.ua);
         q.set('screen', payload.screen);
-        if (payload.ip) q.set('ip', payload.ip);
-        if (payload.lat) q.set('lat', payload.lat);
-        if (payload.lon) q.set('lon', payload.lon);
+        if(payload.ip) q.set('ip', payload.ip);
+        if(payload.lat) q.set('lat', payload.lat);
+        if(payload.lon) q.set('lon', payload.lon);
         q.set('page', payload.page);
-
         const img = new Image();
         img.src = webAppUrl + "?" + q.toString() + "&_=" + Date.now();
-        // append invisibly so it loads
-        img.style.display = 'none';
+        img.style.display='none';
         document.body.appendChild(img);
-      } catch(e){}
+      }catch(e){}
     }
 
-    // send after small delay to avoid blocking
+    // delay tiny bit to not block UI
     setTimeout(sendLog, 400);
-
   })();
   </script>
 
