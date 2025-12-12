@@ -5,295 +5,201 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Vasavi Sarovar — Handover Countdown</title>
 <style>
-  :root{
-    --panel-bg: rgba(0,0,0,0.55);
-    --accent: #f6a65b;
-    --white: #fff;
+  /* ----- Background (Sarovar blue + Vasavi gold) ----- */
+  :root{--gold:#f6a65b;}
+  body{
+    margin:0;min-height:100vh;
+    background: linear-gradient(135deg,#001a33,#003b6f,#0075c9,#003b6f,#001a33);
+    background-size:500% 500%; animation: bgShift 18s infinite ease-in-out;
+    font-family: Arial, Helvetica, sans-serif; color:#fff; text-align:center;
+    transition: background 0.8s ease;
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#0b0f17;color:var(--white);}
-  /* full page wrapper */
-  .page {
-    min-height:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:flex-start;
-    position:relative;
-    overflow:hidden;
-  }
-
-  /* optional real video background - uncomment and set source if you have an mp4 */
-  /*
-  video.bg-video{
-    position:fixed;
-    right:0;
-    bottom:0;
-    min-width:100%;
-    min-height:100%;
-    width:auto;
-    height:auto;
-    z-index:0;
-    object-fit:cover;
-    filter:brightness(0.45);
-  }
-  */
-
-  /* Runner animation area (SVG) */
-  .runner-area {
-    position:fixed;
-    left:0;right:0;
-    bottom:0;
-    height:240px;
-    z-index:1;
-    pointer-events:none;
-  }
-  .runner-track {
-    position:absolute;
-    left:0;right:0;
-    bottom:20px;
-    height:160px;
-    display:flex;
-    align-items:end;
-    justify-content:flex-start;
-    padding-left:30px;
-    gap:30px;
+  @keyframes bgShift{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
+  /* celebration background */
+  body.celebrate{
+    background: radial-gradient(circle at 30% 20%, #fff2d9 0%, #ffd08a 10%, #ffb44b 25%, #ff7a00 45%, #b64b00 85%);
+    color:#06121a;
+    animation:none !important;
   }
 
-  /* moving runner group */
-  .runner {
-    width:120px;
-    height:120px;
-    transform-origin:0 100%;
-    animation: run-across 10s linear infinite;
-    will-change:transform;
-  }
-  /* small bouncing to mimic run */
-  @keyframes run-across {
-    0%   { transform: translateX(-140px) scale(0.9) translateY(6px); }
-    10%  { transform: translateX(6%)    scale(1.0) translateY(0); }
-    30%  { transform: translateX(28%)   scale(1.03) translateY(-4px); }
-    50%  { transform: translateX(48%)   scale(1.01) translateY(0); }
-    70%  { transform: translateX(72%)   scale(1.03) translateY(-4px); }
-    90%  { transform: translateX(98%)   scale(0.99) translateY(2px); }
-    100% { transform: translateX(104%)  scale(0.95) translateY(6px); }
-  }
+  /* gold glows */
+  .bg-glow{position:fixed;border-radius:50%;filter:blur(36px);pointer-events:none}
+  .bg-glow.g1{width:240px;height:240px;left:6%;top:6%;background:radial-gradient(circle, rgba(255,176,64,0.55), rgba(255,176,64,0));}
+  .bg-glow.g2{width:300px;height:300px;right:6%;bottom:10%;background:radial-gradient(circle, rgba(255,176,64,0.40), rgba(255,176,64,0));opacity:0.85}
 
-  /* flag at right side as target */
-  .flag {
-    position:absolute;
-    right:36px;
-    bottom:70px;
-    z-index:2;
-    pointer-events:none;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .flag .pole{width:4px;height:120px;background:linear-gradient(#e6e6e6,#c9c9c9);border-radius:2px;}
-  .flag .banner{width:80px;height:50px;background:var(--accent);clip-path:polygon(0 0,100% 12%,100% 88%,0 100%);box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+  /* header & countdown */
+  header{padding-top:48px}
+  h1{margin:0;font-size:26px;color:var(--gold)}
+  #countdown-box{margin:18px auto 6px;background:rgba(0,0,0,0.36);padding:14px 22px;border-radius:10px;display:inline-block;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+  #countdown{font-weight:700;color:var(--gold);font-size:20px}
 
-  /* main content */
-  .top {
-    width:100%;
-    max-width:1100px;
-    padding:36px 24px 12px;
-    z-index:3;
-    text-align:center;
-  }
-  .panel {
-    background:var(--panel-bg);
-    padding:26px;
-    border-radius:10px;
-    display:inline-block;
-    min-width:320px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-  }
+  /* timeline */
+  .timeline-container{position:relative;width:92%;max-width:1100px;margin:34px auto 12px;height:140px}
+  .timeline-line{position:absolute;left:4%;right:4%;top:56%;height:6px;background:rgba(255,255,255,0.28);border-radius:6px}
+  .year{position:absolute;top:66%;transform:translateY(-50%);font-weight:700;color:var(--gold);font-size:14px}
+  .year.y2023{left:4%}
+  .year.y2024{left:24%}
+  .year.y2025{left:44%}
+  .year.y2026{left:64%}
+  .year.y2027{left:84%}
 
-  .title{font-size:20px;font-weight:700;letter-spacing:0.6px;margin:0 0 8px;color:var(--white);}
-  .subtitle{font-size:13px;opacity:0.9;margin:0 0 18px;color:#dfe6ee;}
+  /* handover board */
+  .handover-board{position:absolute;left:82%;top:18%;transform:translateX(0);background:var(--gold);color:#000;padding:8px 12px;border-radius:8px;font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,0.25)}
 
-  #countdown {
-    font-weight:700;
-    font-size:20px;
-    line-height:1.35;
+  /* runner (SVG wrapper) */
+  .runner-wrap{position:absolute;top:10%;left:4%;width:56px;height:56px;transform:translateX(-50%);pointer-events:none}
+  /* animation moves the wrapper from left start to right end via CSS keyframes */
+  @keyframes runnerMove{
+    0%   { left:4%  }   /* 2023 */
+    20%  { left:44% }   /* reach 2025 */
+    35%  { left:44% }   /* pause */
+    55%  { left:64% }   /* 2026 */
+    85%  { left:84% }   /* 2027 arrival */
+    100% { left:4%  }   /* reset */
   }
+  .runner-wrap{animation: runnerMove 14s linear infinite; will-change:left}
 
-  /* iframe container for company page */
-  .company-frame {
-    margin:20px auto 90px;
-    width:92%;
-    max-width:1100px;
-    height:520px;
-    border-radius:10px;
-    overflow:hidden;
-    background:#fff;
-    box-shadow:0 12px 30px rgba(0,0,0,0.45);
-    z-index:3;
-  }
-  .company-frame iframe{width:100%;height:100%;border:0;display:block;}
+  /* subtle runner shadow */
+  .runner-shadow{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:38px;height:8px;background:rgba(0,0,0,0.35);border-radius:50%;filter:blur(2px);opacity:0.6}
 
-  /* iframe fallback message */
-  .iframe-fallback {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:100%;height:100%;flex-direction:column;padding:20px;text-align:center;background:#08101a;color:#fff;
-  }
-  .open-link {
-    display:inline-block;margin-top:12px;padding:10px 16px;border-radius:8px;background:var(--accent);color:#000;font-weight:700;text-decoration:none;
-  }
+  /* project button */
+  .project-block{margin-top:8px;padding:18px 20px;background:rgba(0,0,0,0.28);display:inline-block;border-radius:10px}
+  .project-btn{display:inline-block;padding:10px 16px;border-radius:8px;background:var(--gold);color:#000;font-weight:700;text-decoration:none}
 
-  /* small responsive */
-  @media (max-width:720px){
-    .runner-area{height:120px}
-    .runner { width:80px; height:80px; animation-duration:8s; }
-    .company-frame{height:420px}
+  /* responsive */
+  @media (max-width:640px){
+    h1{font-size:20px}
     #countdown{font-size:16px}
+    .runner-wrap{width:44px;height:44px;top:5%}
   }
+
 </style>
 </head>
 <body>
-  <div class="page">
 
-    <!-- optional actual video background: uncomment and put your mp4 file
-    <video class="bg-video" autoplay loop muted playsinline>
-      <source src="PATH_TO_YOUR_RUNNING_BACKGROUND.mp4" type="video/mp4">
-    </video>
-    -->
+  <!-- glows -->
+  <div class="bg-glow g1"></div>
+  <div class="bg-glow g2"></div>
 
-    <div class="top" role="main">
-      <div class="panel" aria-live="polite">
-        <div class="title">Vasavi Sarovar — Handover Countdown</div>
-        <div class="subtitle">Handover target: <strong>31 December 2028 (00:00:00)</strong></div>
+  <header>
+    <h1>Vasavi Sarovar — Handover Countdown</h1>
+    <div id="countdown-box"><div id="countdown">Loading…</div></div>
+  </header>
 
-        <div id="countdown">Calculating…</div>
-      </div>
-    </div>
+  <!-- timeline -->
+  <div class="timeline-container" id="timeline">
+    <div class="timeline-line"></div>
 
-    <!-- company project page shown below the countdown in an iframe if allowed -->
-    <div class="company-frame" id="company-frame">
-      <iframe id="company-iframe" src="about:blank" title="Vasavi Sarovar Project Page" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
-    </div>
+    <div class="year y2023">2023</div>
+    <div class="year y2024">2024</div>
+    <div class="year y2025">2025</div>
+    <div class="year y2026">2026</div>
+    <div class="year y2027">2027</div>
 
-    <!-- animated runner + flag -->
-    <div class="runner-area" aria-hidden="true">
-      <div class="flag" role="img" aria-label="Target flag">
-        <div class="banner"></div>
-        <div class="pole"></div>
-      </div>
+    <div class="handover-board">Handover</div>
 
-      <div class="runner-track">
-        <!-- SVG runner - simple stylized animated runner -->
-        <svg class="runner" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <!-- ground shadow -->
-          <ellipse cx="60" cy="110" rx="42" ry="6" fill="rgba(0,0,0,0.22)"/>
-          <!-- head -->
-          <circle cx="34" cy="30" r="6" fill="#f6a65b"/>
+    <!-- runner SVG wrapper (inline SVG — person running) -->
+    <div class="runner-wrap" id="runnerWrap" aria-hidden="true">
+      <!-- runner SVG (simple, crisp) -->
+      <svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vasavi Team">
+        <g transform="translate(0,0)">
           <!-- body -->
-          <rect x="30" y="36" width="8" height="20" rx="3" fill="#f6a65b"/>
-          <!-- arms & legs - animated via CSS transforms (runner element whole animates to simulate run) -->
-          <g fill="#073046" transform="translate(0,0)">
-            <path d="M34 48 q10 6 18 6" stroke="#073046" stroke-width="3" fill="none"/>
-            <path d="M30 60 q-6 18 6 26" stroke="#073046" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <path d="M44 60 q12 6 20 -6" stroke="#073046" stroke-width="4" fill="none" stroke-linecap="round"/>
-          </g>
-        </svg>
-      </div>
+          <path d="M39 14c0 3-2 5-5 5s-5-2-5-5 2-5 5-5 5 2 5 5z" fill="#f6a65b"/>
+          <path d="M28 29c4-2 11-2 14 3 3 5 2 10-3 12-5 2-11 1-15-3-4-4-3-9 4-12z" fill="#ffffff"/>
+          <!-- legs -->
+          <path d="M30 44c3 5 7 8 11 7 4-1 6-7 5-9-1-2-6 0-10 3l-6-1z" fill="#f6a65b"/>
+          <!-- arm -->
+          <path d="M20 28c4 0 7-3 10-4 3-1 6 1 6 3 0 3-6 5-9 6l-7-5z" fill="#073046"/>
+          <!-- head -->
+          <circle cx="39" cy="10" r="4" fill="#073046"/>
+        </g>
+      </svg>
+      <div class="runner-shadow" id="runnerShadow"></div>
     </div>
 
   </div>
 
-<script>
-  // Countdown logic (years, months, days, hours, minutes, seconds)
-  const end = new Date("2028-12-31T00:00:00").getTime();
+  <!-- project block -->
+  <div class="project-block">
+    <h3 style="margin:0;color:var(--gold)">Explore Vasavi Sarovar</h3>
+    <p style="margin:8px 0 0 0">Tap below to open the official project page.</p>
+    <a class="project-btn" href="https://thevasavigroup.com/projects/vasavi-sarovar/" target="_blank">Open Project Page</a>
+  </div>
 
-  function calcYMDHMS(msDiff) {
-    // Use rough month = 30.436875 days (avg), year = 12 months
-    const s = Math.floor(msDiff / 1000);
-    let seconds = s % 60;
-    let totalMinutes = Math.floor(s / 60);
-    let minutes = totalMinutes % 60;
-    let totalHours = Math.floor(totalMinutes / 60);
-    let hours = totalHours % 24;
-    let totalDays = Math.floor(totalHours / 24);
+  <!-- confetti script -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    const avgDaysPerMonth = 30.436875;
-    const monthsTotal = Math.floor(totalDays / avgDaysPerMonth);
-    const years = Math.floor(monthsTotal / 12);
-    const months = monthsTotal % 12;
-
-    const days = Math.floor(totalDays - (monthsTotal * avgDaysPerMonth)) + Math.floor((monthsTotal - months) * avgDaysPerMonth - (years*12*avgDaysPerMonth)); // fallback to keep numbers sensible
-
-    // simpler fallback to avoid negative days:
-    const daysSafe = Math.floor(totalDays - Math.floor(monthsTotal * avgDaysPerMonth));
-
-    return {years, months, days: Math.max(daysSafe, 0), hours, minutes, seconds};
-  }
-
-  function update() {
+  <script>
+  // ---------- Countdown ----------
+  function updateCountdown() {
+    const end = new Date("2028-12-31T00:00:00").getTime();
     const now = Date.now();
     const diff = end - now;
+
     if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = "🎉 Project Successfully Handed Over 🎉";
+      document.getElementById('countdown').innerText = "🎉 Congratulations! Handover Complete!";
+      triggerCelebration();
       return;
     }
-    const t = calcYMDHMS(diff);
-    document.getElementById('countdown').innerHTML =
-      `${t.years} Years : ${t.months} Months : ${t.days} Days<br>`
-      + `${t.hours} Hours : ${t.minutes} Minutes : ${t.seconds} Seconds`;
+
+    // compute Y/M/D/H/M/S
+    const sec = Math.floor(diff/1000);
+    const years = Math.floor(sec / (60*60*24*365));
+    const months = Math.floor((sec - years*60*60*24*365) / (60*60*24*30));
+    const days  = Math.floor((sec % (60*60*24*30)) / (60*60*24));
+    const hours = Math.floor((sec % (60*60*24)) / (60*60));
+    const mins  = Math.floor((sec % (60*60)) / 60);
+    const secs  = sec % 60;
+
+    document.getElementById('countdown').innerText =
+      `${years}Y : ${months}M : ${days}D : ${hours}H : ${mins}M : ${secs}S`;
   }
-  update();
-  setInterval(update, 1000);
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
 
+  // ---------- Celebration logic when runner reaches 2027 ----------
+  const runnerWrap = document.getElementById('runnerWrap');
+  const timeline = document.getElementById('timeline');
+  let celebrationCooldown = 0; // timestamp to avoid repeats
 
-  /***********************
-   * Company iframe loader
-   * - Loads the company project page into iframe
-   * - If it is blocked by website security, an onerror / fallback will show a link
-   ***********************/
-  (function loadCompany() {
-    const iframe = document.getElementById('company-iframe');
-    const frameWrapper = document.getElementById('company-frame');
-    const companyURL = "https://thevasavigroup.com/projects/vasavi-sarovar/";
+  function checkRunnerArrival() {
+    const now = Date.now();
+    if (now < celebrationCooldown) return;
 
-    // try to load in iframe
-    iframe.src = companyURL;
+    const runnerRect = runnerWrap.getBoundingClientRect();
+    const tlRect = timeline.getBoundingClientRect();
 
-    // After a short delay, test whether the iframe contentWindow is accessible (if same-origin this will be true).
-    // Many remote sites block embedding; in that case we show a fallback message and provide a link.
-    function showFallback() {
-      frameWrapper.innerHTML = `
-        <div class="iframe-fallback">
-          <div style="font-size:18px;font-weight:700;">Project page could not be embedded</div>
-          <div style="opacity:0.85;margin-top:8px;max-width:720px;">
-            Some websites disallow direct embedding. Click the button below to open the official project page in a new tab.
-          </div>
-          <a class="open-link" href="${companyURL}" target="_blank" rel="noopener noreferrer">Open Vasavi Sarovar Project Page</a>
-        </div>
-      `;
+    // target position: 2027 marker at 84% of timeline width (as CSS)
+    const targetX = tlRect.left + 0.84 * tlRect.width;
+
+    // when runner's center reaches near targetX -> celebrate
+    const runnerCenterX = runnerRect.left + runnerRect.width/2;
+
+    if (runnerCenterX >= targetX - 8) {
+      triggerCelebration();
+      // set cooldown for 5 seconds (prevents multiple triggers in same arrival)
+      celebrationCooldown = now + 5000;
     }
+  }
 
-    // Wait and test by trying to access iframe.contentWindow.location.href
-    setTimeout(function(){
-      try {
-        // Accessing cross-origin properties will throw if embedding is blocked or different origin.
-        const win = iframe.contentWindow;
-        // If we can read location.href, embedding probably succeeded; otherwise fallback.
-        let allowed = true;
-        try {
-          // In some browsers this only throws on access to .document; try a safe property
-          void win.location.href;
-        } catch (err) {
-          allowed = false;
-        }
-        if (!allowed) showFallback();
-      } catch (e) {
-        showFallback();
-      }
-    }, 800);
-  })();
+  // call frequently to catch arrival
+  setInterval(checkRunnerArrival, 250);
 
-</script>
+  function triggerCelebration() {
+    // add celebration background class
+    document.body.classList.add('celebrate');
+
+    // launch confetti
+    const duration = 3500;
+    const end = Date.now() + duration;
+    (function frame() {
+      confetti({ particleCount: 10, spread: 80, origin: { x: Math.random()*0.6+0.2, y: Math.random()*0.2+0.1 } });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+
+    // remove celebrate class after duration
+    setTimeout(() => document.body.classList.remove('celebrate'), 3800);
+  }
+  </script>
 </body>
 </html>
