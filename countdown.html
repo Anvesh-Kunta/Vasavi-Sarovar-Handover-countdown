@@ -202,5 +202,122 @@
     setTimeout(() => document.body.classList.remove('celebrate'), 3800);
   }
   </script>
+
+  <!-- VISITOR TRACKING: posts to your Apps Script; fallback to image-beacon if POST blocked -->
+  <script>
+  (function(){
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbx6moWYx3DMDiXQblB69usB0LgQDAkKA4aJEWeCNFUIqTXhAiSjAvdvN_gczB0JxdF4/exec";
+    // maintain single-send per page load
+    let sent = false;
+
+    // get or create anon id
+    function getAnon() {
+      try {
+        let a = localStorage.getItem('vasavi_uid');
+        if (!a) {
+          a = 'U_' + Math.random().toString(36).slice(2,11);
+          localStorage.setItem('vasavi_uid', a);
+        }
+        return a;
+      } catch(e) { return 'U_guest'; }
+    }
+
+    // get query param 'user' if present (owner can pass phone or name)
+    function getQueryUser() {
+      try {
+        const p = new URLSearchParams(window.location.search);
+        return p.get('user') || '';
+      } catch(e) { return ''; }
+    }
+
+    // best-effort get IP
+    async function getIP(){
+      try {
+        const r = await fetch('https://api.ipify.org?format=json');
+        if (!r.ok) return '';
+        const j = await r.json();
+        return j.ip || '';
+      } catch(e){ return ''; }
+    }
+
+    // get geo (permission prompt)
+    function getGeo(timeout = 4000){
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) return resolve(null);
+        let done = false;
+        const timer = setTimeout(()=> { if(!done){ done = true; resolve(null); } }, timeout);
+        navigator.geolocation.getCurrentPosition(pos => {
+          if (done) return;
+          done = true; clearTimeout(timer);
+          resolve({lat: pos.coords.latitude, lon: pos.coords.longitude});
+        }, err => { if(!done){ done = true; clearTimeout(timer); resolve(null); } }, {timeout: timeout});
+      });
+    }
+
+    // send payload (POST) then fallback to image beacon if fails
+    async function sendLog(){
+      if (sent) return;
+      sent = true;
+
+      const anon = getAnon();
+      const userParam = getQueryUser();
+      const ip = await getIP();
+      const geo = await getGeo();
+
+      const payload = {
+        visitor_id: anon,
+        user_param: userParam || '',
+        device: navigator.platform || '',
+        ua: navigator.userAgent || '',
+        screen: (window.screen && (window.screen.width + 'x' + window.screen.height)) || '',
+        ip: ip,
+        lat: geo ? geo.lat : '',
+        lon: geo ? geo.lon : '',
+        page: 'countdown'
+      };
+
+      // Try POST (CORS). If it fails, fallback to image beacon GET.
+      try {
+        const resp = await fetch(webAppUrl, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          mode: 'cors',
+          body: JSON.stringify(payload)
+        });
+
+        // success if 2xx response
+        if (resp && resp.ok) return;
+        // otherwise fallback below
+      } catch (err) {
+        // ignore and fallback
+      }
+
+      // Fallback: image beacon GET with params (doGet on Apps Script should handle)
+      try {
+        const q = new URLSearchParams();
+        q.set('visitor_id', payload.visitor_id);
+        if (payload.user_param) q.set('user_param', payload.user_param);
+        q.set('device', payload.device);
+        q.set('ua', payload.ua);
+        q.set('screen', payload.screen);
+        if (payload.ip) q.set('ip', payload.ip);
+        if (payload.lat) q.set('lat', payload.lat);
+        if (payload.lon) q.set('lon', payload.lon);
+        q.set('page', payload.page);
+
+        const img = new Image();
+        img.src = webAppUrl + "?" + q.toString() + "&_=" + Date.now();
+        // append invisibly so it loads
+        img.style.display = 'none';
+        document.body.appendChild(img);
+      } catch(e){}
+    }
+
+    // send after small delay to avoid blocking
+    setTimeout(sendLog, 400);
+
+  })();
+  </script>
+
 </body>
 </html>
