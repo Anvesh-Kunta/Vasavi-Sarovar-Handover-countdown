@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vasavi Sarovar — Handover Countdown</title>
+<style>
+  :root{
+    --panel-bg: rgba(0,0,0,0.55);
+    --accent: #f6a65b;
+    --white: #fff;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:#0b0f17;color:var(--white);}
+  /* full page wrapper */
+  .page {
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* optional real video background - uncomment and set source if you have an mp4 */
+  /*
+  video.bg-video{
+    position:fixed;
+    right:0;
+    bottom:0;
+    min-width:100%;
+    min-height:100%;
+    width:auto;
+    height:auto;
+    z-index:0;
+    object-fit:cover;
+    filter:brightness(0.45);
+  }
+  */
+
+  /* Runner animation area (SVG) */
+  .runner-area {
+    position:fixed;
+    left:0;right:0;
+    bottom:0;
+    height:240px;
+    z-index:1;
+    pointer-events:none;
+  }
+  .runner-track {
+    position:absolute;
+    left:0;right:0;
+    bottom:20px;
+    height:160px;
+    display:flex;
+    align-items:end;
+    justify-content:flex-start;
+    padding-left:30px;
+    gap:30px;
+  }
+
+  /* moving runner group */
+  .runner {
+    width:120px;
+    height:120px;
+    transform-origin:0 100%;
+    animation: run-across 10s linear infinite;
+    will-change:transform;
+  }
+  /* small bouncing to mimic run */
+  @keyframes run-across {
+    0%   { transform: translateX(-140px) scale(0.9) translateY(6px); }
+    10%  { transform: translateX(6%)    scale(1.0) translateY(0); }
+    30%  { transform: translateX(28%)   scale(1.03) translateY(-4px); }
+    50%  { transform: translateX(48%)   scale(1.01) translateY(0); }
+    70%  { transform: translateX(72%)   scale(1.03) translateY(-4px); }
+    90%  { transform: translateX(98%)   scale(0.99) translateY(2px); }
+    100% { transform: translateX(104%)  scale(0.95) translateY(6px); }
+  }
+
+  /* flag at right side as target */
+  .flag {
+    position:absolute;
+    right:36px;
+    bottom:70px;
+    z-index:2;
+    pointer-events:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .flag .pole{width:4px;height:120px;background:linear-gradient(#e6e6e6,#c9c9c9);border-radius:2px;}
+  .flag .banner{width:80px;height:50px;background:var(--accent);clip-path:polygon(0 0,100% 12%,100% 88%,0 100%);box-shadow:0 4px 14px rgba(0,0,0,0.25);}
+
+  /* main content */
+  .top {
+    width:100%;
+    max-width:1100px;
+    padding:36px 24px 12px;
+    z-index:3;
+    text-align:center;
+  }
+  .panel {
+    background:var(--panel-bg);
+    padding:26px;
+    border-radius:10px;
+    display:inline-block;
+    min-width:320px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .title{font-size:20px;font-weight:700;letter-spacing:0.6px;margin:0 0 8px;color:var(--white);}
+  .subtitle{font-size:13px;opacity:0.9;margin:0 0 18px;color:#dfe6ee;}
+
+  #countdown {
+    font-weight:700;
+    font-size:20px;
+    line-height:1.35;
+  }
+
+  /* iframe container for company page */
+  .company-frame {
+    margin:20px auto 90px;
+    width:92%;
+    max-width:1100px;
+    height:520px;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 12px 30px rgba(0,0,0,0.45);
+    z-index:3;
+  }
+  .company-frame iframe{width:100%;height:100%;border:0;display:block;}
+
+  /* iframe fallback message */
+  .iframe-fallback {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;height:100%;flex-direction:column;padding:20px;text-align:center;background:#08101a;color:#fff;
+  }
+  .open-link {
+    display:inline-block;margin-top:12px;padding:10px 16px;border-radius:8px;background:var(--accent);color:#000;font-weight:700;text-decoration:none;
+  }
+
+  /* small responsive */
+  @media (max-width:720px){
+    .runner-area{height:120px}
+    .runner { width:80px; height:80px; animation-duration:8s; }
+    .company-frame{height:420px}
+    #countdown{font-size:16px}
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- optional actual video background: uncomment and put your mp4 file
+    <video class="bg-video" autoplay loop muted playsinline>
+      <source src="PATH_TO_YOUR_RUNNING_BACKGROUND.mp4" type="video/mp4">
+    </video>
+    -->
+
+    <div class="top" role="main">
+      <div class="panel" aria-live="polite">
+        <div class="title">Vasavi Sarovar — Handover Countdown</div>
+        <div class="subtitle">Handover target: <strong>31 December 2028 (00:00:00)</strong></div>
+
+        <div id="countdown">Calculating…</div>
+      </div>
+    </div>
+
+    <!-- company project page shown below the countdown in an iframe if allowed -->
+    <div class="company-frame" id="company-frame">
+      <iframe id="company-iframe" src="about:blank" title="Vasavi Sarovar Project Page" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+    </div>
+
+    <!-- animated runner + flag -->
+    <div class="runner-area" aria-hidden="true">
+      <div class="flag" role="img" aria-label="Target flag">
+        <div class="banner"></div>
+        <div class="pole"></div>
+      </div>
+
+      <div class="runner-track">
+        <!-- SVG runner - simple stylized animated runner -->
+        <svg class="runner" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- ground shadow -->
+          <ellipse cx="60" cy="110" rx="42" ry="6" fill="rgba(0,0,0,0.22)"/>
+          <!-- head -->
+          <circle cx="34" cy="30" r="6" fill="#f6a65b"/>
+          <!-- body -->
+          <rect x="30" y="36" width="8" height="20" rx="3" fill="#f6a65b"/>
+          <!-- arms & legs - animated via CSS transforms (runner element whole animates to simulate run) -->
+          <g fill="#073046" transform="translate(0,0)">
+            <path d="M34 48 q10 6 18 6" stroke="#073046" stroke-width="3" fill="none"/>
+            <path d="M30 60 q-6 18 6 26" stroke="#073046" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M44 60 q12 6 20 -6" stroke="#073046" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // Countdown logic (years, months, days, hours, minutes, seconds)
+  const end = new Date("2028-12-31T00:00:00").getTime();
+
+  function calcYMDHMS(msDiff) {
+    // Use rough month = 30.436875 days (avg), year = 12 months
+    const s = Math.floor(msDiff / 1000);
+    let seconds = s % 60;
+    let totalMinutes = Math.floor(s / 60);
+    let minutes = totalMinutes % 60;
+    let totalHours = Math.floor(totalMinutes / 60);
+    let hours = totalHours % 24;
+    let totalDays = Math.floor(totalHours / 24);
+
+    const avgDaysPerMonth = 30.436875;
+    const monthsTotal = Math.floor(totalDays / avgDaysPerMonth);
+    const years = Math.floor(monthsTotal / 12);
+    const months = monthsTotal % 12;
+
+    const days = Math.floor(totalDays - (monthsTotal * avgDaysPerMonth)) + Math.floor((monthsTotal - months) * avgDaysPerMonth - (years*12*avgDaysPerMonth)); // fallback to keep numbers sensible
+
+    // simpler fallback to avoid negative days:
+    const daysSafe = Math.floor(totalDays - Math.floor(monthsTotal * avgDaysPerMonth));
+
+    return {years, months, days: Math.max(daysSafe, 0), hours, minutes, seconds};
+  }
+
+  function update() {
+    const now = Date.now();
+    const diff = end - now;
+    if (diff <= 0) {
+      document.getElementById('countdown').innerHTML = "🎉 Project Successfully Handed Over 🎉";
+      return;
+    }
+    const t = calcYMDHMS(diff);
+    document.getElementById('countdown').innerHTML =
+      `${t.years} Years : ${t.months} Months : ${t.days} Days<br>`
+      + `${t.hours} Hours : ${t.minutes} Minutes : ${t.seconds} Seconds`;
+  }
+  update();
+  setInterval(update, 1000);
+
+
+  /***********************
+   * Company iframe loader
+   * - Loads the company project page into iframe
+   * - If it is blocked by website security, an onerror / fallback will show a link
+   ***********************/
+  (function loadCompany() {
+    const iframe = document.getElementById('company-iframe');
+    const frameWrapper = document.getElementById('company-frame');
+    const companyURL = "https://thevasavigroup.com/projects/vasavi-sarovar/";
+
+    // try to load in iframe
+    iframe.src = companyURL;
+
+    // After a short delay, test whether the iframe contentWindow is accessible (if same-origin this will be true).
+    // Many remote sites block embedding; in that case we show a fallback message and provide a link.
+    function showFallback() {
+      frameWrapper.innerHTML = `
+        <div class="iframe-fallback">
+          <div style="font-size:18px;font-weight:700;">Project page could not be embedded</div>
+          <div style="opacity:0.85;margin-top:8px;max-width:720px;">
+            Some websites disallow direct embedding. Click the button below to open the official project page in a new tab.
+          </div>
+          <a class="open-link" href="${companyURL}" target="_blank" rel="noopener noreferrer">Open Vasavi Sarovar Project Page</a>
+        </div>
+      `;
+    }
+
+    // Wait and test by trying to access iframe.contentWindow.location.href
+    setTimeout(function(){
+      try {
+        // Accessing cross-origin properties will throw if embedding is blocked or different origin.
+        const win = iframe.contentWindow;
+        // If we can read location.href, embedding probably succeeded; otherwise fallback.
+        let allowed = true;
+        try {
+          // In some browsers this only throws on access to .document; try a safe property
+          void win.location.href;
+        } catch (err) {
+          allowed = false;
+        }
+        if (!allowed) showFallback();
+      } catch (e) {
+        showFallback();
+      }
+    }, 800);
+  })();
+
+</script>
+</body>
+</html>
